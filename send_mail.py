@@ -13,7 +13,8 @@ def getnowdatetime():
 id = "rpa_001"
 _programname = "電子申請ダウンロード"
 commonmessage = "0件中0件ダウンロードしました。（検索結果500件以上はカウントしていません。）ダウンロード結果は「C:\\Users\kreis1g-tpc-029\Desktop\穆作業\教育カリキュラム」フォルダに格納してあります。（ファイル名:「送信案件一覧.xlsx」）"
-errormessage = "%USERNAME%へのリモート接続はされているが何らかの理由で設定ファイルにて指定されたフォルダにアクセスできない為、異常終了しました。ダウンロード件数は$totalDownloadCompletedCount$件でした、「C:\\Users\%USERNAME%\_電子申請一時保存」テンポラリフォルダにダウンロードファイルを格納しました。"
+#errormessage = "%USERNAME%へのリモート接続はされているが何らかの理由で設定ファイルにて指定されたフォルダにアクセスできない為、異常終了しました。ダウンロード件数は$totalDownloadCompletedCount$件でした、「C:\\Users\%USERNAME%\_電子申請一時保存」テンポラリフォルダにダウンロードファイルを格納しました。"
+errormessage = "予期せぬエラーが発生しため、開いたエクセルを閉じ、ログインした社労夢システムを閉じ、再度実行してください。"
 f = open(r'C:\Users\kreis1g-tpc-029\Desktop\ワーニングメモ.txt', 'r', encoding='UTF-8')
 warningmessage = f.read()
 f.close()
@@ -22,26 +23,28 @@ my_password = "shinrei0406"
 to_address = email.utils.formataddr(('boku', "shinrei-boku@kreis-inc.jp"))
 cc = "shinrei-boku@kreis-inc.jp"
 subject = "電子申請ダウンロード自動実行結果"
+#body = "ID= {0} , {1} が、{2} に異常終了しました。:collision:".format(id,_programname,getnowdatetime())
 body = ":scream:事業所長BOTからRPAクラウド維持管理者へ　\n" \
         "ID= {0} , {1} が、{2} に異常終了しました。:collision:".format(id,_programname,getnowdatetime()) +  \
-        "対応してください　:sob:" \
-        " \n ダウンロード件数： \n {0}".format(commonmessage) +  \
-        " \n 異常終了の原因： \n {0}".format(errormessage) +  \
-        " \n ワーニング： \n {0}".format(warningmessage)
+        "対応してください　:sob:\n" \
+        "\nダウンロード件数：\n{0}\n".format(commonmessage) + \
+        "\n異常終了の原因：\n{0}\n".format(errormessage) +  \
+        "\nワーニング： \n{0}".format(warningmessage)
 print(body)
 
 def create_message(from_addr,to_addr,cc_addr,subj,bod):
-    ##msg = MIMEText(bod,"html")
+    #msg = MIMEText(bod,"html/text/plain","utf-8")
     msg = MIMEMultipart()
     msg['Subject'] = subj
     msg['From'] = from_addr
     msg['To'] = to_addr
     msg['Cc'] = cc_addr
-    msg.attach(MIMEText(bod,"html"))
+    msg.attach(MIMEText(bod))
     #commont = ""
     # ファイルを添付
     
     if (len(commonmessage) == 0) or ("0件ダウンロード" in commonmessage):
+        print("no attach")
         return msg
     else:
         path_start = commonmessage.find("「C:")
